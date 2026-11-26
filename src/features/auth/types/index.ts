@@ -13,3 +13,7 @@ export interface MyDetailsResponse {
   profilePicture: string;
   accessToken: string
 }
+
+export interface LogoutResponse{
+  logout: boolean
+}

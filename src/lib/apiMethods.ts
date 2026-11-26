@@ -49,7 +49,7 @@ export async function GET<T>(url: string, config?: AxiosRequestConfig) {
 
 export async function POST<TResponse, TRequest = unknown>(
   url: string,
-  body: TRequest,
+  body?: TRequest,
   config?: AxiosRequestConfig,
 ) {
   try {

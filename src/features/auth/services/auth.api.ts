@@ -1,5 +1,5 @@
 import { GET, POST } from "@/lib/apiMethods";
-import type { LoginRequest, LoginResponse, MyDetailsResponse } from "../types";
+import type { LoginRequest, LoginResponse, LogoutResponse, MyDetailsResponse } from "../types";
 
 const API_PREFIX = "/api/v1"
 
@@ -16,6 +16,17 @@ export const loginMutation = async (
   }
 
   return loginResponse;
+};
+
+export const logoutMutation = async (): Promise<LogoutResponse> => {
+  const logOutResponse = await POST<LogoutResponse>(
+    `${API_PREFIX}/auth/logout`);
+
+  if (!logOutResponse?.logout) {
+    throw new Error("Logout not successful");
+  }
+
+  return logOutResponse;
 };
 
 export const getMyDetails = async (): Promise<MyDetailsResponse> => {
