@@ -1,11 +1,35 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "@tanstack/react-form";
 import type { Agent, AgentInput } from "../types";
+
+const availableTools = [
+  {
+    _id: "calculator",
+    toolName: "Calculator",
+    toolDescription: "Perform mathematical calculations",
+  },
+  {
+    _id: "web-search",
+    toolName: "Web Search",
+    toolDescription: "Search for information on the web",
+  },
+  {
+    _id: "read-emails",
+    toolName: "Read Emails",
+    toolDescription: "Read and summarize emails",
+  },
+  {
+    _id: "send-emails",
+    toolName: "Send Emails",
+    toolDescription: "Draft and send emails",
+  },
+];
 
 type AgentFormProps = {
   agent?: Agent;
@@ -19,7 +43,7 @@ const AgentForm = ({ agent, isPending, onSubmit }: AgentFormProps) => {
       name: agent?.name ?? "",
       knowledgeBase: agent?.knowledgeBase ?? "",
       instructions: agent?.instructions ?? "",
-      tools: agent?.tools.join("\n") ?? "",
+      tools: agent?.tools ?? [],
       isActive: agent?.isActive ?? true,
     },
     onSubmit: async ({ value }) => {
@@ -27,10 +51,7 @@ const AgentForm = ({ agent, isPending, onSubmit }: AgentFormProps) => {
         name: value.name.trim(),
         knowledgeBase: value.knowledgeBase.trim(),
         instructions: value.instructions.trim(),
-        tools: value.tools
-          .split("\n")
-          .map((tool) => tool.trim())
-          .filter(Boolean),
+        tools: value.tools,
         isActive: value.isActive,
       });
     },
@@ -142,24 +163,56 @@ const AgentForm = ({ agent, isPending, onSubmit }: AgentFormProps) => {
 
           <form.Field name="tools">
             {(field) => (
-              <div className="space-y-2">
-                <Label className="text-[#e7e2e9]" htmlFor={field.name}>
-                  Tools
-                </Label>
-                <Textarea
-                  id={field.name}
-                  className="min-h-20 border-white/10 bg-black/30 text-[#f3f1f5] placeholder:text-[#77717d] focus-visible:border-blue-300/40 focus-visible:ring-blue-300/15"
-                  name={field.name}
-                  onBlur={field.handleBlur}
-                  onChange={(event) => field.handleChange(event.target.value)}
-                  placeholder={"search_knowledge_base\nanother_tool"}
-                  rows={3}
-                  value={field.state.value}
-                />
-                <p className="text-sm text-[#85818a]">
-                  Enter one tool name per line. Leave empty to use no tools.
-                </p>
-              </div>
+              <fieldset className="space-y-2">
+                <div className="space-y-1">
+                  <legend className="text-sm font-medium text-[#e7e2e9]">
+                    Tools
+                  </legend>
+                  <p className="text-sm text-[#85818a]">
+                    Select the capabilities available to your agent.
+                  </p>
+                </div>
+                <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-black/20">
+                  {availableTools.map((tool, index) => {
+                    const checkboxId = `${field.name}-${tool._id}`;
+                    const isSelected = field.state.value.includes(tool.toolName);
+
+                    return (
+                      <label
+                        className={`flex cursor-pointer items-center justify-between gap-4 px-4 py-4 transition-colors hover:bg-white/[0.04] ${
+                          index > 0 ? "border-t border-white/[0.06]" : ""
+                        }`}
+                        htmlFor={checkboxId}
+                        key={tool._id}
+                      >
+                        <span className="space-y-1">
+                          <span className="block font-medium text-[#e7e2e9]">
+                            {tool.toolName}
+                          </span>
+                          <span className="block text-sm text-[#85818a]">
+                            {tool.toolDescription}
+                          </span>
+                        </span>
+                        <Checkbox
+                          aria-label={`Enable ${tool.toolName}`}
+                          checked={isSelected}
+                          id={checkboxId}
+                          onCheckedChange={(checked) => {
+                            field.handleChange(
+                              checked
+                                ? [...field.state.value, tool.toolName]
+                                : field.state.value.filter(
+                                    (selectedTool) =>
+                                      selectedTool !== tool.toolName,
+                                  ),
+                            );
+                          }}
+                        />
+                      </label>
+                    );
+                  })}
+                </div>
+              </fieldset>
             )}
           </form.Field>
 

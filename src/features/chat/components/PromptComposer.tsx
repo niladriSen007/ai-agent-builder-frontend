@@ -2,26 +2,44 @@ import { ArrowUp, ImagePlus, MoreHorizontal, Search, AudioLines } from "lucide-r
 import { useState, type FormEvent } from "react";
 
 type PromptComposerProps = {
-  onSubmit: (prompt: string) => void;
+  onSubmit: (prompt: string) => Promise<void>;
 };
 
 const PromptComposer = ({ onSubmit }: PromptComposerProps) => {
   const [prompt, setPrompt] = useState("");
   const [activeTool, setActiveTool] = useState<"search" | "image" | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmedPrompt = prompt.trim();
-    if (!trimmedPrompt) return;
-    onSubmit(trimmedPrompt);
-    setPrompt("");
+    if (!trimmedPrompt || isSubmitting) return;
+
+    setIsSubmitting(true);
+    setSubmitError("");
+    try {
+      await onSubmit(trimmedPrompt);
+      setPrompt("");
+    } catch (error: unknown) {
+      setSubmitError(
+        error instanceof Error ? error.message : "Unable to send your message.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <form className="prompt-composer" onSubmit={handleSubmit}>
+    <form
+      aria-busy={isSubmitting}
+      className="prompt-composer"
+      onSubmit={(event) => void handleSubmit(event)}
+    >
       <label className="sr-only" htmlFor="assistant-prompt">Ask anything</label>
       <textarea
         id="assistant-prompt"
+        disabled={isSubmitting}
         onChange={(event) => setPrompt(event.target.value)}
         onKeyDown={(event) => {
           if (event.key === "Enter" && !event.shiftKey) {
@@ -33,6 +51,11 @@ const PromptComposer = ({ onSubmit }: PromptComposerProps) => {
         rows={3}
         value={prompt}
       />
+      {submitError && (
+        <p aria-live="assertive" className="prompt-error" role="alert">
+          {submitError}
+        </p>
+      )}
       <div className="composer-toolbar">
         <div className="composer-tools">
           <button
@@ -64,10 +87,14 @@ const PromptComposer = ({ onSubmit }: PromptComposerProps) => {
           <button
             aria-label="Send prompt"
             className="send-button"
-            disabled={!prompt.trim()}
+            disabled={!prompt.trim() || isSubmitting}
             type="submit"
           >
-            <ArrowUp size={18} strokeWidth={2.5} />
+            {isSubmitting ? (
+              <span aria-hidden="true" className="send-spinner" />
+            ) : (
+              <ArrowUp size={18} strokeWidth={2.5} />
+            )}
           </button>
         </div>
       </div>

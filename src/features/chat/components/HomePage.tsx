@@ -4,17 +4,18 @@ import PromptComposer from "./PromptComposer";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import WelcomeHero from "./WelcomeHero";
+import { sendChatMessage } from "../services/chat.api";
 import "./home.css";
 
 const HomePage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("AI Chat");
   const [isLight, setIsLight] = useState(false);
-  const [promptNotice, setPromptNotice] = useState("");
+  const [chatReply, setChatReply] = useState("");
 
   const handleNewChat = () => {
     setActiveSection("AI Chat");
-    setPromptNotice("");
+    setChatReply("");
     setSidebarOpen(false);
   };
 
@@ -40,11 +41,14 @@ const HomePage = () => {
           <WelcomeHero />
           <div className="home-content-inner">
             <PromptComposer
-              onSubmit={(prompt) => setPromptNotice(`Prompt ready: ${prompt}`)}
+              onSubmit={async (prompt) => {
+                setChatReply("");
+                setChatReply(await sendChatMessage(prompt));
+              }}
             />
-            <Activity mode={promptNotice ? "visible" : "hidden"}>
-              <p aria-live="polite" className="prompt-notice">
-                {promptNotice}
+            <Activity mode={chatReply ? "visible" : "hidden"}>
+              <p aria-live="polite" className="prompt-notice" role="status">
+                {chatReply}
               </p>
             </Activity>
             <GettingStartedCards />
