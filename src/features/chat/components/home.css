@@ -826,6 +826,183 @@
   color: #68616e;
 }
 
+.chat-page {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  flex-direction: column;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 62% 48% at 50% 26%, rgba(30, 91, 190, 0.3), transparent 74%),
+    radial-gradient(ellipse 42% 30% at 52% 12%, rgba(14, 116, 200, 0.16), transparent 78%),
+    radial-gradient(ellipse 33% 24% at 50% 2%, rgba(35, 45, 65, 0.16), transparent 75%),
+    #000;
+  color: #f3f1f5;
+  font-family: var(--font-sans), sans-serif;
+}
+
+.chat-page *,
+.chat-page *::before,
+.chat-page *::after {
+  box-sizing: border-box;
+}
+
+.chat-page-header {
+  display: flex;
+  min-height: 64px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 14px;
+  padding: 0 clamp(18px, 4vw, 48px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+  background: rgba(10, 9, 12, 0.55);
+  backdrop-filter: blur(18px);
+}
+
+.chat-back-button {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #c9c4ce;
+  cursor: pointer;
+}
+
+.chat-back-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.chat-page-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.chat-page-title h1 {
+  margin: 0;
+  color: #e7e2e9;
+  font-size: 14px;
+  font-weight: 560;
+}
+
+.chat-title-icon,
+.chat-assistant-icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(96, 165, 250, 0.24);
+  background: rgba(59, 130, 246, 0.12);
+  color: #93c5fd;
+}
+
+.chat-title-icon {
+  width: 29px;
+  height: 29px;
+  border-radius: 9px;
+}
+
+.chat-messages {
+  display: flex;
+  width: min(100%, 860px);
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 22px;
+  align-self: center;
+  min-height: 0;
+  padding: 30px clamp(18px, 4vw, 32px);
+  overflow: auto;
+  scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+  scrollbar-width: thin;
+}
+
+.chat-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  max-width: 100%;
+}
+
+.chat-message-user {
+  justify-content: flex-end;
+}
+
+.chat-assistant-icon {
+  width: 29px;
+  height: 29px;
+  margin-top: 2px;
+  border-radius: 9px;
+}
+
+.chat-message-content {
+  max-width: min(78%, 680px);
+  padding: 12px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 15px;
+  background: rgba(18, 20, 27, 0.82);
+  color: #e4e0e8;
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.chat-message-user .chat-message-content {
+  border-color: rgba(96, 165, 250, 0.2);
+  border-top-right-radius: 5px;
+  background: rgba(37, 75, 130, 0.42);
+  color: #edf5ff;
+}
+
+.chat-message-assistant .chat-message-content {
+  border-top-left-radius: 5px;
+}
+
+.chat-message-content strong {
+  color: #fff;
+  font-weight: 650;
+}
+
+.chat-status,
+.chat-error {
+  margin: 4px 0;
+  color: #a09ca5;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.chat-error {
+  color: #fca5a5;
+}
+
+.chat-composer-dock {
+  z-index: 1;
+  flex: 0 0 auto;
+  padding: 16px 20px max(12px, env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.72) 24%);
+}
+
+.chat-composer-inner {
+  width: min(100%, 760px);
+  margin: 0 auto;
+}
+
+.chat-page .prompt-composer {
+  background: linear-gradient(145deg, rgba(22, 27, 37, 0.98), rgba(17, 19, 25, 0.98));
+}
+
+.chat-disclaimer {
+  margin: 9px 0 0;
+  color: #77737c;
+  font-size: 10px;
+  text-align: center;
+}
+
 @media (max-width: 900px) {
   .home-sidebar {
     flex-basis: 238px;
@@ -921,6 +1098,26 @@
 }
 
 @media (max-width: 480px) {
+  .chat-page-header {
+    min-height: 58px;
+    padding: 0 15px;
+  }
+
+  .chat-messages {
+    gap: 17px;
+    padding: 22px 15px;
+  }
+
+  .chat-message-content {
+    max-width: calc(100% - 40px);
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .chat-composer-dock {
+    padding: 10px 12px max(10px, env(safe-area-inset-bottom));
+  }
+
   .home-content {
     padding: 31px 16px 25px;
   }

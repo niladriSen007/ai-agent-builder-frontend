@@ -1,21 +1,20 @@
-import { Activity, useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import GettingStartedCards from "./GettingStartedCards";
 import PromptComposer from "./PromptComposer";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import WelcomeHero from "./WelcomeHero";
-import { sendChatMessage } from "../services/chat.api";
 import "./home.css";
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("AI Chat");
   const [isLight, setIsLight] = useState(false);
-  const [chatReply, setChatReply] = useState("");
 
   const handleNewChat = () => {
     setActiveSection("AI Chat");
-    setChatReply("");
     setSidebarOpen(false);
   };
 
@@ -42,15 +41,9 @@ const HomePage = () => {
           <div className="home-content-inner">
             <PromptComposer
               onSubmit={async (prompt) => {
-                setChatReply("");
-                setChatReply(await sendChatMessage(prompt));
+                navigate("/chat", { state: { initialPrompt: prompt } });
               }}
             />
-            <Activity mode={chatReply ? "visible" : "hidden"}>
-              <p aria-live="polite" className="prompt-notice" role="status">
-                {chatReply}
-              </p>
-            </Activity>
             <GettingStartedCards />
           </div>
         </div>
